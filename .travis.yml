@@ -1,0 +1,19 @@
+language: python
+python:
+  - "3.7"
+# command to install dependencies
+install:
+  - pip install -r info/requirements.txt
+# command to run tests
+script:
+  - cd info/
+  - python server.py
+env:
+  - DB_DBNAME=watches
+  - DB_HOST=localhost
+  - DB_PASS=DB_PASS
+  - DB_USER=DB_USER
+  - DB_PORT=3306
+  - DB_DBNAME=DB_DBNAME
+  - HTTP_USER=HTTP_USER
+  - HTTP_PASS=HTTP_PASS

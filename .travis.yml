@@ -5,8 +5,8 @@ python:
 install:
   - pip install -r info/requirements.txt
 # command to run tests
+before_script: cd info/
 script:
-  - cd info/
   - python server.py
 env:
   - DB_DBNAME=watches

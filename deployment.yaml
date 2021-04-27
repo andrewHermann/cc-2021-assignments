@@ -1,0 +1,43 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: infoservice-deployment
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: infoservice
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: infoservice
+    spec:
+      containers:
+      - name: infoservice
+        image: ajhermann/infoservice:latest
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 1080
+        env:
+        - name: DB_PASS
+          value: watches
+        - name: DB_DBNAME
+          value: watches
+        - name: DB_USER
+          value: watches
+        - name: DB_HOST
+          value: 34.65.182.241
+        - name: HTTP_USER
+          value: cloud
+        - name: HTTP_PASS
+          value: computing
+        - name: DB_PORT
+          value: "3306"

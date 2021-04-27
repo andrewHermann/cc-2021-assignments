@@ -1,0 +1,199 @@
+openapi: 3.0.0
+info:
+  title: Watch info service
+  version: '1.0'
+servers:
+  - url: 'http://localhost/info/v1'
+  - url: 'http://localhost:1080/info/v1'
+security:
+  - basicAuth: []
+paths:
+  /watch:
+    post:
+      summary: Add a new watch to the store
+      requestBody:
+        description: Watch object that needs to be added to the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Watch'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid input
+  '/watch/{sku}':
+    get:
+      summary: Return watch data
+      parameters:
+        - name: sku
+          in: path
+          description: SKU of the watch to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Watch'
+        '404':
+          description: Watch not found
+    put:
+      summary: Updates a watch in the store with form data
+      parameters:
+        - name: sku
+          in: path
+          description: SKU of the watch that needs to be updated
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Properties that needs to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Watch'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid input
+        '404':
+          description: Watch not found
+    delete:
+      summary: Deletes a watch
+      parameters:
+        - name: sku
+          in: path
+          description: SKU of the watch to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+        '404':
+          description: Watch not found
+  '/watch/complete-sku/{prefix}':
+    get:
+      summary: Get list of SKUs matching a prefix
+      parameters:
+        - name: prefix
+          in: path
+          description: SKU prefix to search (ideal for autocompletion)
+          example: CAR2
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of SKUs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+    '/watch/find':
+      get:
+        summary: Finds watches by any criteria
+        parameters:
+          - name: sku
+            in: query
+            description: partial sku
+            example: CAR2
+            required: false
+            schema:
+              type: string
+          - name: type
+            in: query
+            required: false
+            schema:
+              type: string
+              enum:
+                - watch
+                - chrono
+          - name: status
+            in: query
+            required: false
+            schema:
+              type: string
+              enum:
+                - old
+                - current
+                - outlet
+          - name: gender
+            in: query
+            required: false
+            schema:
+              type: string
+              enum:
+                - man
+                - woman
+          - name: year
+            in: query
+            required: false
+            schema:
+              type: integer
+        responses:
+          '200':
+            description: Successful operation
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Watch'
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+  schemas:
+    Watch:
+      type: object
+      required:
+        - sku
+        - type
+        - status
+        - gender
+        - year
+      properties:
+        sku:
+          type: string
+        type:
+          type: string
+          enum:
+            - watch
+            - chrono
+        status:
+          type: string
+          enum:
+            - old
+            - current
+            - outlet
+        gender:
+          type: string
+          enum:
+            - man
+            - woman
+        year:
+          type: integer
+          format: int64
+        dial_material:
+          type: string
+        dial_color:
+          type: string
+        case_material:
+          type: string
+        case_form:
+          type: string
+        bracelet_material:
+          type: string
+        movement:1
+          type: string

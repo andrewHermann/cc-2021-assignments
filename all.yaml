@@ -1,0 +1,73 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: infoservice-deployment
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: infoservice
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: infoservice
+    spec:
+      containers:
+      - name: infoservice
+        image: ajhermann/infoservice:latest
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 1080
+        env:
+        - name: DB_PASS
+          value: watches
+        - name: DB_DBNAME
+          value: watches
+        - name: DB_USER
+          value: watches
+        - name: DB_HOST
+          value: 34.65.182.241
+        - name: HTTP_USER
+          value: cloud
+        - name: HTTP_PASS
+          value: computing
+        - name: DB_PORT
+          value: "3306"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: infoservice
+  namespace: default
+spec:
+  ports:
+  - port: 1080
+    protocol: TCP
+    targetPort: 1080
+  selector:
+    app: infoservice
+  type: NodePort
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: infoservice-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /info/v1/*
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          serviceName: infoservice
+          servicePort: 1080
